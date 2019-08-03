@@ -1,0 +1,58 @@
+---
+title: "GRAD 695 Executive Class"
+author: Qiulin Peng
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+income <- read.csv("~/income.csv", header = TRUE)
+```
+
+## Introduction
+
+We are using the Income dataset and try to answer the research question, so we first explore the dataset to have dataset overview.
+```{r}
+nrow(income)
+summary(income)
+```
+
+We see that we have 535 records and 8 variables. 
+
+An interesting question will be: Are there any difference in income of people from different industries?
+
+## Exploratory Data Analysis
+
+### Correlation between Numeric Variables
+```{r}
+numeric_var <- c("All_workers","All_weekly","M_workers","M_weekly","F_workers","F_weekly")
+numeric_df <- income[numeric_var]
+cor(numeric_df)
+```
+
+Weekly income data have more than half are missing value, so we focus on the worker income variables. It shows that All_worker is highly correlated (>0.83) with M_workers and F_workers, and it suggests that if we include both All_workers and M_workers/F_workers in the model, there will be multilinearity issue. We also see that correlation coefficient between M_worker and F_workers is about 0.39, and it does not have high correlation. Therefore, we will include M_workers and F_workers or All_workers only as numeric variables.
+
+### ANOVA Test of Industry Income
+```{r}
+boxplot(income$All_workers~income$Industry, main='Boxplot of Income Difference Among Industry', xlab='Industry', ylab='Average Income')
+```
+
+The boxplot shows that the mean income varies among industry. ANOVA test results show that p-value < 0.05, therefore we reject the null hypothesis that the mean incomes are the same among industries, and can conclude that the there are significant differences in mean income among different industries.
+
+```{r}
+summary(aov(All_workers~Industry, data = income))
+```
+
+### Gender Income Difference
+```{r}
+t.test(income$M_workers,income$F_workers)
+```
+
+The t-test results show that, the mean income for males worker is $113, and mean income for female worker is $90. However the p-value = 0.09 > 0.05, so we cannot reject the null hypothesis, and it means we can conclude that there's no significant difference of mean income between gender.
+
+## Regression Analysis
+
+```{r}
+```
+
+## Conclusion
